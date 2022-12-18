@@ -233,8 +233,7 @@ public class AppStoreAPI implements ISerializer {
     //---------------------
     // Persistence methods
     //---------------------
-    // TODO UNCOMMENT THIS COMPLETED CODE block as you start working through this class
-    //---------------------
+
     @SuppressWarnings("unchecked")
     public void load() throws Exception {
         //list of classes that you wish to include in the serialisation, separated by a comma
@@ -285,5 +284,13 @@ public class AppStoreAPI implements ISerializer {
             }
             swapApps(apps, i, highestIndex);
         }
+    }
+
+    /**
+     * The number of apps that are currently in the list of apps
+     * @return The count of apps that are currently in the list
+     */
+    public int numberOfApps() {
+        return apps.size();
     }
 }

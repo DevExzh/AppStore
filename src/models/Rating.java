@@ -7,8 +7,6 @@ public class Rating {
     private int numberOfStars = 0;
     private String raterName = "<rater name>";
     private String ratingComment = "<no comment>";
-
-    // TODO Nothing!  This class is complete
     
     public Rating(int numberOfStars, String raterName, String ratingComment) {
         setNumberOfStars(numberOfStars);

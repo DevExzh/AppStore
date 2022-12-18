@@ -8,8 +8,6 @@ import static java.lang.Math.random;
 
 public class RatingUtility {
 
-    //TODO Nothing!  This utility is completed!
-
         private static List<String> listOfAuthors = new ArrayList<>(){{
             add("JohnD");
             add("Adam101");

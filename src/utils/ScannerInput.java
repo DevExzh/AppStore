@@ -5,8 +5,6 @@ import java.util.Scanner;
 
 public class ScannerInput {
 
-    //TODO Nothing!  This utility is completed!
-
     public static int validNextInt(String prompt) {
         Scanner input = new Scanner(System.in);
         do {

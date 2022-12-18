@@ -4,8 +4,6 @@ import java.util.List;
 
 public class Utilities {
 
-    //TODO Nothing!  This utility is completed! Note: you may decide to add other utility methods, however.
-
     /**
      * This method takes in a decimal point number and truncates it to two decimal places.  Note
      * that the method does NOT round when truncating; the numbers after the two decimal places are

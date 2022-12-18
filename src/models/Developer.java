@@ -3,9 +3,6 @@ package models;
 import java.util.Objects;
 
 public class Developer {
-
-    //TODO Nothing!  The Developer class is completed!
-
     private String developerName = "<no developer>";
     private String developerWebsite = "<no website>";
 
