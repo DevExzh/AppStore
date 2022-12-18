@@ -3,6 +3,7 @@ package controllers;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import models.*;
+import utils.ISerializer;
 import utils.Utilities;
 
 import java.io.FileReader;
@@ -12,9 +13,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeveloperAPI {
-
-    //TODO Nothing!  The DeveloperAPI class is completed! All you have to do here is implemment the ISerializer interface
+public class DeveloperAPI implements ISerializer {
 
     private List<Developer> developers = new ArrayList<>();
 
