@@ -17,6 +17,16 @@ public class FoundationClassUtilities {
         void invoke();
     }
 
+    public static int scanValidInteger(String prompt, FunctionPointer<Boolean, Integer> callback) {
+        int returnValue;
+        for(;;) {
+            if(callback.invoke(returnValue = ScannerInput.validNextInt(prompt))) {
+                return returnValue;
+            }
+            System.out.println("Sorry, that is an invalid value, please enter again!");
+        }
+    }
+
     /**
      * A helper class that helps to count, sum, calculate, etc.
      * @param <E> the type of the elements that the collection contains

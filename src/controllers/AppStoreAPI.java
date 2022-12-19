@@ -68,6 +68,7 @@ public class AppStoreAPI implements ISerializer {
      * @return
      */
     public App getAppByName(String name) {
+        if(name == null) return null;
         for(App app : apps) {
             if(app.getAppName().equalsIgnoreCase(name)) {
                 return app;
@@ -139,14 +140,14 @@ public class AppStoreAPI implements ISerializer {
     }
 
     public String listAllAppsByName(String name) {
-        if(apps.isEmpty()) return "No apps for name " + name + " exists";
+        if(apps.isEmpty() || !isValidAppName(name)) return "No apps for name " + name + " exists";
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < apps.size(); i++) {
             if(apps.get(i).getAppName().equalsIgnoreCase(name)) {
                 sb.append(i).append(": ").append(apps.get(i)).append('\n');
             }
         }
-        if(sb.isEmpty()) sb.append("No apps for name " + name + " exists");
+        if(sb.isEmpty()) sb.append("No apps for name ").append(name).append(" exists");
         return sb.toString();
     }
 

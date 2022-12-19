@@ -24,6 +24,6 @@ public class ProductivityApp extends App {
     @Override
     public boolean isRecommendedApp() {
         return Utilities.greaterThanOrEqualTo(getAppCost(), 1.99) &&
-                Utilities.greaterThanOrEqualTo(calculateRating(), 3.0);
+                calculateRating() > 3.0;
     }
 }

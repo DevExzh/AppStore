@@ -24,7 +24,7 @@ public abstract class App {
         this.developer = developer;
     }
 
-    private HashSet<Language> languages = new HashSet<Language>();
+    private final HashSet<Language> languages = new HashSet<>();
 
     public void addLanguage(Language language) {
         languages.add(language);
@@ -35,7 +35,7 @@ public abstract class App {
     }
 
     public List<Language> getLanguages() {
-        return new ArrayList<Language>(languages);
+        return new ArrayList<>(languages);
     }
 
     private String description = "";
@@ -75,7 +75,7 @@ public abstract class App {
     }
 
     public void setAppSize(double appSize) {
-        this.appSize = appSize;
+        if(appSize >= 1 && appSize <= 1000) this.appSize = appSize;
     }
 
     /**
@@ -90,7 +90,7 @@ public abstract class App {
     }
 
     public void setAppVersion(double appVersion) {
-        this.appVersion = appVersion;
+        if(appVersion >= 1.0) this.appVersion = appVersion;
     }
     /**
      * <strong>Private Field</strong>
@@ -104,7 +104,7 @@ public abstract class App {
     }
 
     public void setAppCost(double appCost) {
-        this.appCost = appCost;
+        if(appCost >= 0) this.appCost = appCost;
     }
 
     /**
@@ -122,7 +122,17 @@ public abstract class App {
      * <strong>Private Field</strong>
      * <p>contains all ratings for a specific app…the overall rating score is calculated from the arraylist entries. Note how the Driver "simulates" ratings (code is given for that).</p>
      */
-    private List<Rating> ratings = new ArrayList<>();
+    private final List<Rating> ratings = new ArrayList<>();
+
+    public String getCurrencySymbol() {
+        return currencySymbol;
+    }
+
+    public void setCurrencySymbol(String currencySymbol) {
+        this.currencySymbol = currencySymbol;
+    }
+
+    private String currencySymbol = "€";
 
     /**
      * <strong>Constructor</strong>
@@ -136,8 +146,8 @@ public abstract class App {
         this.developer = developer;
         this.appName = appName;
         if(Utilities.validRange(appSize, 0, 1000)) this.appSize = appSize;
-        if(Utilities.greaterThanOrEqualTo(0, appVersion)) this.appVersion = appVersion;
-        if(Utilities.greaterThanOrEqualTo(0, appCost)) this.appCost = appCost;
+        if(Utilities.greaterThanOrEqualTo(appVersion, 1.0)) this.appVersion = appVersion;
+        if(Utilities.greaterThanOrEqualTo(appCost, 0)) this.appCost = appCost;
     }
 
     public abstract boolean isRecommendedApp();
@@ -150,7 +160,21 @@ public abstract class App {
     }
 
     public String appSummary() {
-        return appName + " (V" + appVersion + ") by " + developer.getDeveloperName() + appCost + ". Rating: " + calculateRating();
+        StringBuilder sb = new StringBuilder();
+        sb.append(appName)
+                .append("(V").append(appVersion).append(") by ") // App version
+                .append(developer).append(", ") // Developer name
+                .append(appCost == 0 ? "Free" : currencySymbol + appCost) // App cost
+                .append(". Rating: ").append(calculateRating()).append(". ") // Rating
+                .append("Supported languages: ");
+        for(Language language : languages) {
+            sb.append(language.toString()).append(", ");
+        }
+        if(sb.substring(sb.length() - 2, sb.length()).equals(", ")) {
+            sb.delete(sb.length() - 2, sb.length());
+        }
+        sb.append('.');
+        return sb.toString();
     }
 
     public boolean addRating(Rating rating) {
@@ -164,5 +188,14 @@ public abstract class App {
             sb.append(r.toString()).append("\n");
         }
         return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return appName + "(Version " +
+                appVersion + ") by " + developer +
+                ", Size: " + appSize + "MB" +
+                ", Cost: " + appCost +
+                ", Ratings (" + calculateRating() + "): " + ratings;
     }
 }

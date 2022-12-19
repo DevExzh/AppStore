@@ -29,10 +29,20 @@ public class EducationApp extends App {
      */
     @Override
     public boolean isRecommendedApp() {
-        return Utilities.greaterThanOrEqualTo(getAppCost(), 0.99) &&
+        return getAppCost() > 0.99 &&
                 Utilities.greaterThanOrEqualTo(calculateRating(), 3.5) &&
                 Utilities.greaterThanOrEqualTo(level, 3);
 
+    }
+
+    @Override
+    public String appSummary() {
+        return super.appSummary() + ", level " + getLevel() + ".";
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + ", Level: " + getLevel() + ".";
     }
 
     public int getLevel() {

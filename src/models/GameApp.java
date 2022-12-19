@@ -1,5 +1,7 @@
 package models;
 
+import utils.Utilities;
+
 import java.util.HashSet;
 
 /**
@@ -23,8 +25,8 @@ public class GameApp extends App {
         return genres;
     }
 
-    public void addGenre(Genre genre) {
-        genres.add(genre);
+    public boolean addGenre(Genre genre) {
+        return genres.add(genre);
     }
 
     public void removeGenre(Genre genre) {
@@ -50,12 +52,28 @@ public class GameApp extends App {
      * @param appVersion The version of the App
      * @param appCost    How much a consumer should pay
      */
-    public GameApp(Developer developer, String appName, double appSize, double appVersion, double appCost) {
+    public GameApp(Developer developer, String appName, double appSize, double appVersion, double appCost, boolean isMultiplayer) {
         super(developer, appName, appSize, appVersion, appCost);
+        this.isMultiplayer = isMultiplayer;
     }
 
     @Override
     public boolean isRecommendedApp() {
-        return false;
+        return isMultiplayer && Utilities.greaterThanOrEqualTo(calculateRating(), 4.0);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(super.toString());
+        sb.append(". ").append(isMultiplayer ? "Multiplayer, " : "Single-player, ");
+        sb.append("Genres: ");
+        for (Genre genre : getGenres()) {
+            sb.append(genre.toString()).append(", ");
+        }
+        if(sb.substring(sb.length() - 2, sb.length()).equals(", ")) {
+            sb.delete(sb.length() - 2, sb.length());
+        }
+        return sb.toString();
     }
 }

@@ -3,6 +3,7 @@ package main;
 import controllers.AppStoreAPI;
 import controllers.DeveloperAPI;
 import models.*;
+import utils.FoundationClassUtilities;
 import utils.ScannerInput;
 
 /**
@@ -12,11 +13,6 @@ import utils.ScannerInput;
  * @link <a href="https://github.com/DevExzh/">GitHub Link</a>
  */
 public class Driver {
-
-    //TODO Some skeleton code has been given to you.
-    //     Familiarise yourself with the skeleton code...run the menu and then review the skeleton code.
-    //     Then start working through the spec.
-
     private DeveloperAPI developerAPI = new DeveloperAPI();
     private AppStoreAPI appStoreAPI = new AppStoreAPI();
 
@@ -59,9 +55,14 @@ public class Driver {
                 //case 2 -> // TODO run the App Store Menu and the associated methods (your design here)
                 //case 3 -> // TODO run the Reports Menu and the associated methods (your design here)
                 case 4 -> searchAppsBySpecificCriteria();
-                //case 5 -> // TODO Sort Apps by Name
-                //case 6 -> // TODO print the recommended apps
-                //case 7 -> // TODO print the random app of the day
+                case 5 -> appStoreAPI.sortAppsByNameAscending(); // Sort Apps by Name
+                case 6 -> { // print the recommended apps
+                    System.out.println(appStoreAPI.listAllRecommendedApps());
+                }
+                case 7 -> {
+                    System.out.println("=== App of the Day ==="); // print the random app of the day
+                    System.out.println(appStoreAPI.randomApp());
+                }
                 case 8 -> simulateRatings();
                 case 20 -> saveAllData();
                 case 21 -> loadAllData();
@@ -151,11 +152,6 @@ public class Driver {
         }
     }
 
-
-
-    //--------------------------------------------------
-    // TODO UNCOMMENT THIS CODE as you start working through this class
-    //--------------------------------------------------
     private void searchAppsBySpecificCriteria() {
         System.out.println("""
                 What criteria would you like to search apps by:
@@ -165,25 +161,38 @@ public class Driver {
         int option = ScannerInput.validNextInt("==>> ");
         switch (option) {
             // TODO Search methods below
-            // case 1 -> searchAppsByName();
-            // case 2 -> searchAppsByDeveloper(readValidDeveloperByName());
-            // case 3 -> searchAppsEqualOrAboveAStarRating();
-            // default -> System.out.println("Invalid option");
+            case 1 -> searchAppsByName();
+            case 2 -> searchAppsByDeveloper(readValidDeveloperByName());
+            case 3 -> searchAppsEqualOrAboveAStarRating();
+            default -> System.out.println("Invalid option");
         }
     }
 
-    //--------------------------------------------------
-    // TODO UNCOMMENT THIS COMPLETED CODE as you start working through this class
-    //--------------------------------------------------
+    private void searchAppsEqualOrAboveAStarRating() {
+        System.out.println(
+                appStoreAPI.listAllAppsAboveOrEqualAGivenStarRating(
+                        FoundationClassUtilities.scanValidInteger(
+                                "Please enter the rating that you want to search: ",
+                                (integer) -> integer >= 1 && integer <= 5)));
+    }
+
+    private void searchAppsByDeveloper(Developer developer) {
+        System.out.println(appStoreAPI.listAllAppsByChosenDeveloper(developer));
+    }
+
+    private void searchAppsByName() {
+        System.out.println(appStoreAPI.listAllAppsByName(ScannerInput.validNextLine("Please enter a name to search: ")));
+    }
+
     private void simulateRatings() {
         // simulate random ratings for all apps (to give data for recommended apps and reports etc).
-        //if (appStoreAPI.numberOfApps() > 0) {
-        //    System.out.println("Simulating ratings...");
-        //    appStoreAPI.simulateRatings();
-        //    System.out.println(appStoreAPI.listSummaryOfAllApps());
-        //} else {
-        //    System.out.println("No apps");
-        //}
+        if (appStoreAPI.numberOfApps() > 0) {
+            System.out.println("Simulating ratings...");
+            appStoreAPI.simulateRatings();
+            System.out.println(appStoreAPI.listSummaryOfAllApps());
+        } else {
+            System.out.println("No apps");
+        }
     }
 
     //--------------------------------------------------
@@ -191,13 +200,21 @@ public class Driver {
     //--------------------------------------------------
 
     private void saveAllData() {
-        // TODO try-catch to save the developers to XML file
-        // TODO try-catch to save the apps in the store to XML file
+        try {
+            developerAPI.save();
+            appStoreAPI.save();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadAllData() {
-        // TODO try-catch to load the developers from XML file
-        // TODO try-catch to load the apps in the store from XML file
+        try {
+            developerAPI.load();
+            appStoreAPI.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

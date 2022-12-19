@@ -124,11 +124,8 @@ public class DeveloperAPI implements ISerializer {
     @SuppressWarnings("unchecked")
     public void load() throws Exception {
         //list of classes that you wish to include in the serialisation, separated by a comma
-        Class<?>[] classes = new Class[]{Developer.class};
-
-        //setting up the xstream object with default security and the above classes
+        Class<?>[] classes = new Class[]{Developer.class, String.class, boolean.class, int.class, double.class};
         XStream xstream = new XStream(new DomDriver());
-        XStream.setupDefaultSecurity(xstream);
         xstream.allowTypes(classes);
 
         //doing the actual serialisation to an XML file
