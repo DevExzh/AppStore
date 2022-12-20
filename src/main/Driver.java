@@ -5,6 +5,7 @@ import controllers.DeveloperAPI;
 import models.*;
 import utils.FoundationClassUtilities;
 import utils.ScannerInput;
+import utils.Utilities;
 
 /**
  * The responsibility for this class is to manage the User Interface (UI) i.e. the menu and user input/output. This class should be the only class that has System.out.println() or Scanner reads in it. This class contains an object of AppStoreAPI and an object of DeveloperAPI.
@@ -13,8 +14,8 @@ import utils.ScannerInput;
  * @link <a href="https://github.com/DevExzh/">GitHub Link</a>
  */
 public class Driver {
-    private DeveloperAPI developerAPI = new DeveloperAPI();
-    private AppStoreAPI appStoreAPI = new AppStoreAPI();
+    private final DeveloperAPI developerAPI = new DeveloperAPI();
+    private final AppStoreAPI appStoreAPI = new AppStoreAPI();
 
     public static void main(String[] args) {
         new Driver().start();
@@ -52,13 +53,12 @@ public class Driver {
         while (option != 0) {
             switch (option) {
                 case 1 -> runDeveloperMenu();
-                //case 2 -> // TODO run the App Store Menu and the associated methods (your design here)
-                //case 3 -> // TODO run the Reports Menu and the associated methods (your design here)
+                case 2 -> runAppMenu();
+                case 3 -> runReportMenu();
                 case 4 -> searchAppsBySpecificCriteria();
                 case 5 -> appStoreAPI.sortAppsByNameAscending(); // Sort Apps by Name
-                case 6 -> { // print the recommended apps
-                    System.out.println(appStoreAPI.listAllRecommendedApps());
-                }
+                case 6 -> // print the recommended apps
+                        System.out.println(appStoreAPI.listAllRecommendedApps());
                 case 7 -> {
                     System.out.println("=== App of the Day ==="); // print the random app of the day
                     System.out.println(appStoreAPI.randomApp());
@@ -78,6 +78,92 @@ public class Driver {
         saveAllData();
         System.out.println("Exiting....");
         System.exit(0);
+    }
+
+    //---------------------
+    // App Management
+    // --------------------
+    private void runAppMenu() {
+        switch (FoundationClassUtilities.scanValidInteger("""
+                |--------App Store Menu--------|
+                |  1) Add an app               |
+                |  2) Update an app            |
+                |  3) Delete an app            |
+                |  0) RETURN to main menu      |
+                |------------------------------|
+                """, (choice) -> choice >= 0 && choice <= 5)) {
+            default:
+                ScannerInput.validNextLine("Invalid option... Return to main menu.\nPress any key to continue...");
+            case 0:
+                return;
+            case 1: // Add an app
+                String appType = FoundationClassUtilities.scanValidString(
+                        "Which type of App would you like to add [Education / Game / Productivity]? ",
+                        new String[] {"e", "education", "g", "game", "p", "productivity"});
+                Developer developer = readValidDeveloperByName();
+                String appName = ScannerInput.validNextLine("Please enter the name of the App: ");
+                double appSize = FoundationClassUtilities.scanValidDouble("Please enter the size of the App: ",
+                        (value) -> value >= 1 && value <= 1000); // [1, 1000]
+                double appVersion = FoundationClassUtilities.scanValidDouble("Please enter the version of the App: ",
+                        (value) -> Utilities.greaterThanOrEqualTo(value, 1.0)); // >= 1.0
+                double appCost = FoundationClassUtilities.scanValidDouble("Please enter the cost of the App: ",
+                        (value) -> Utilities.greaterThanOrEqualTo(value, 0)); // >= 0
+                System.out.println(appStoreAPI.addApp(switch (appType.toLowerCase()) {
+                    case "education", "e" ->
+                            new EducationApp(developer, appName, appSize, appVersion, appCost,
+                                    ScannerInput.validNextInt("Please enter the level of the education app: "));
+                    case "game", "g" ->
+                            new GameApp(developer, appName, appSize, appVersion, appCost, Utilities.YNtoBoolean(
+                                    ScannerInput.validNextChar("Does the game support multiplayer? [Y/n]: ")));
+                    case "productivity", "p" ->
+                            new ProductivityApp(developer, appName, appSize, appVersion, appCost);
+                    default -> // Will never reach here, just to be safe
+                            new ProductivityApp(developer, "", -1, -1, -1);
+                }) ? "The app has been added successfully." : "There was an error adding the app.");
+                break;
+            case 2: // Update an app
+                appStoreAPI.listAllApps();
+                App appToBeUpdated = appStoreAPI.getAppByIndex(
+                        FoundationClassUtilities.scanValidInteger(
+                                "Please choose the index of the App you want to update: ",
+                                appStoreAPI::isValidIndex));
+                switch (FoundationClassUtilities.scanValidString(
+                        "Which property would you like to update? [Name / Description / Size / Cost / Version]",
+                        new String[] {"n", "name", "d", "description", "s", "size", "c", "cost", "v", "version"})) {
+                    case "n", "name" -> appToBeUpdated.setAppName(
+                            ScannerInput.validNextLine("Please enter the name of the App: "));
+                    case "d", "description" -> appToBeUpdated.setDescription(
+                            ScannerInput.validNextLine("Please enter the description of the App: "));
+                    case "s", "size" -> appToBeUpdated.setAppSize(
+                            FoundationClassUtilities.scanValidDouble("Please enter the size of the App: ",
+                                    (value) -> value >= 1 && value <= 1000));
+                    case "c", "cost" -> appToBeUpdated.setAppCost(
+                            FoundationClassUtilities.scanValidDouble("Please enter the cost of the App: ",
+                                    (value) -> Utilities.greaterThanOrEqualTo(value, 0)));
+                    case "v", "version" -> appToBeUpdated.setAppVersion(
+                            FoundationClassUtilities.scanValidDouble("Please enter the version of the App: ",
+                                    (value) -> Utilities.greaterThanOrEqualTo(value, 1.0)));
+                }
+                break;
+            case 3: // Delete an app
+                appStoreAPI.listAllApps();
+                System.out.println(
+                        appStoreAPI.deleteAppByIndex(
+                                FoundationClassUtilities.scanValidInteger(
+                                        "Please choose the index of the App you want to delete: ",
+                                        appStoreAPI::isValidIndex)) == null
+                                ? "There was an error deleting the specified App."
+                                : "The App has been deleted successfully.");
+                break;
+
+        }
+    }
+
+    //---------------------
+    // Reports
+    // --------------------
+    private void runReportMenu() {
+
     }
 
     //--------------------------------------------------
@@ -160,7 +246,6 @@ public class Driver {
                   3) Rating (all apps of that rating or above)""");
         int option = ScannerInput.validNextInt("==>> ");
         switch (option) {
-            // TODO Search methods below
             case 1 -> searchAppsByName();
             case 2 -> searchAppsByDeveloper(readValidDeveloperByName());
             case 3 -> searchAppsEqualOrAboveAStarRating();
@@ -185,7 +270,7 @@ public class Driver {
     }
 
     private void simulateRatings() {
-        // simulate random ratings for all apps (to give data for recommended apps and reports etc).
+        // simulate random ratings for all apps (to give data for recommended apps and reports etc.).
         if (appStoreAPI.numberOfApps() > 0) {
             System.out.println("Simulating ratings...");
             appStoreAPI.simulateRatings();
