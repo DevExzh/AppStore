@@ -149,6 +149,9 @@ public class DeveloperAPI implements ISerializer {
         if(!xmlFile.exists()) {
             try {
                 xmlFile.createNewFile();
+                ObjectOutputStream out = new XStream(new DomDriver()).createObjectOutputStream(new FileWriter("developers.xml"));
+                out.writeObject(developers);
+                out.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

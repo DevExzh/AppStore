@@ -257,9 +257,12 @@ public class AppStoreAPI implements ISerializer {
 
     public String fileName() {
         File xmlFile = new File("apps.xml");
-        if(!xmlFile.exists()) {
+        if(!xmlFile.exists()) { // If the file doesn't exist then create it
             try {
                 xmlFile.createNewFile();
+                ObjectOutputStream out = new XStream(new DomDriver()).createObjectOutputStream(new FileWriter("apps.xml"));
+                out.writeObject(apps);
+                out.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
