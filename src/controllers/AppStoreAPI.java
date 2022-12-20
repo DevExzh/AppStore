@@ -6,10 +6,7 @@ import models.*;
 import utils.FoundationClassUtilities;
 import utils.ISerializer;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -258,8 +255,16 @@ public class AppStoreAPI implements ISerializer {
         out.close();
     }
 
-    public String fileName(){
-        return "apps.xml";
+    public String fileName() {
+        File xmlFile = new File("apps.xml");
+        if(!xmlFile.exists()) {
+            try {
+                xmlFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return xmlFile.getName();
     }
 
     /**

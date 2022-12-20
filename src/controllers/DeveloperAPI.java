@@ -6,10 +6,7 @@ import models.*;
 import utils.ISerializer;
 import utils.Utilities;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -148,7 +145,15 @@ public class DeveloperAPI implements ISerializer {
     }
 
     public String fileName(){
-        return "developers.xml";
+        File xmlFile = new File("developers.xml");
+        if(!xmlFile.exists()) {
+            try {
+                xmlFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return xmlFile.getName();
     }
 
 
