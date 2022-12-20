@@ -16,6 +16,7 @@ import utils.Utilities;
 public class Driver {
     private final DeveloperAPI developerAPI = new DeveloperAPI();
     private final AppStoreAPI appStoreAPI = new AppStoreAPI();
+    private String currencySymbol = "€";
 
     public static void main(String[] args) {
         new Driver().start();
@@ -39,6 +40,8 @@ public class Driver {
                 |  6) Recommended Apps             |
                 |  7) Random App of the Day        |
                 |  8) Simulate ratings             |
+                |----------------------------------|
+                |  9) Region preferences           |
                 |----------------------------------|
                 |  20) Save all                    |
                 |  21) Load all                    |
@@ -64,6 +67,7 @@ public class Driver {
                     System.out.println(appStoreAPI.randomApp());
                 }
                 case 8 -> simulateRatings();
+                case 9 -> runRegionMenu();
                 case 20 -> saveAllData();
                 case 21 -> loadAllData();
                 default -> System.out.println("Invalid option entered: " + option);
@@ -72,6 +76,41 @@ public class Driver {
             option = mainMenu();
         }
         exitApp();
+    }
+
+    private void runRegionMenu() {
+        switch (FoundationClassUtilities.scanValidInteger("""
+                -------- Region Preference --------
+                |  1) Change the currency         |
+                |  0) RETURN to main menu         |
+                |---------------------------------|
+                """, (option) -> option >= 0 && option <= 1)) {
+            default:
+                ScannerInput.validNextLine("Invalid option... Return to main menu.\nPress any key to continue...");
+            case 0:
+                return;
+            case 1:
+                currencySymbol = switch (FoundationClassUtilities.scanValidInteger("""
+                        --------------------------------
+                            1) EUR €         2) CNY ￥
+                            3) USD $         4) GBP £
+                       
+                         Current currency:\s
+                        """ + currencySymbol +
+                        "--------------------------------", (option) -> option >= 0 && option <= 1)) {
+                    default -> "€";
+                    case 2 -> "￥";
+                    case 3 -> "$";
+                    case 4 -> "£";
+                };
+                for(int i = 0; i < appStoreAPI.numberOfApps(); ++i) {
+                    App app = appStoreAPI.getAppByIndex(i);
+                    if(!currencySymbol.equals(app.getCurrencySymbol())) {
+                        app.setCurrencySymbol(currencySymbol);
+                    }
+                }
+                break;
+        }
     }
 
     private void exitApp() {
