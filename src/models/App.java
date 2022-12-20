@@ -34,10 +34,6 @@ public abstract class App {
         languages.remove(language);
     }
 
-    public List<Language> getLanguages() {
-        return new ArrayList<>(languages);
-    }
-
     private String description = "";
 
     public void setDescription(String description) {
@@ -144,7 +140,7 @@ public abstract class App {
      */
     public App(Developer developer, String appName, double appSize, double appVersion, double appCost) {
         this.developer = developer;
-        this.appName = appName;
+        if(appName != null && !appName.isEmpty()) this.appName = appName;
         if(Utilities.validRange(appSize, 0, 1000)) this.appSize = appSize;
         if(Utilities.greaterThanOrEqualTo(appVersion, 1.0)) this.appVersion = appVersion;
         if(Utilities.greaterThanOrEqualTo(appCost, 0)) this.appCost = appCost;
@@ -159,22 +155,22 @@ public abstract class App {
                         (Rating r) -> r.getNumberOfStars() != 0);
     }
 
-    public String appSummary() {
+    public String supportedLanguages() {
         StringBuilder sb = new StringBuilder();
-        sb.append(appName)
-                .append("(V").append(appVersion).append(") by ") // App version
-                .append(developer).append(", ") // Developer name
-                .append(appCost == 0 ? "Free" : currencySymbol + appCost) // App cost
-                .append(". Rating: ").append(calculateRating()).append(". ") // Rating
-                .append("Supported languages: ");
         for(Language language : languages) {
             sb.append(language.toString()).append(", ");
         }
-        if(sb.substring(sb.length() - 2, sb.length()).equals(", ")) {
-            sb.delete(sb.length() - 2, sb.length());
-        }
-        sb.append('.');
+        sb.delete(sb.length() - 2, sb.length());
         return sb.toString();
+    }
+
+    public String appSummary() {
+        return appName +
+                "(V" + appVersion + ") by " + // App version
+                developer + ", " + // Developer name
+                (appCost == 0 ? "Free" : currencySymbol + appCost) + // App cost
+                ". Rating: " + calculateRating() + ". " + // Rating
+                "Supported languages: " + supportedLanguages() + '.';
     }
 
     public boolean addRating(Rating rating) {
@@ -192,10 +188,11 @@ public abstract class App {
 
     @Override
     public String toString() {
-        return appName + "(Version " +
-                appVersion + ") by " + developer +
-                ", Size: " + appSize + "MB" +
-                ", Cost: " + appCost +
-                ", Ratings (" + calculateRating() + "): " + ratings;
+        return appName + "(Version " + appVersion
+                + ") by " + developer
+                + ", Size: " + appSize + "MB"
+                + ", Cost: " + currencySymbol + appCost
+                + ", Ratings (" + calculateRating() + "): " + ratings
+                + ", Supported languages: " + supportedLanguages() + '.';
     }
 }
