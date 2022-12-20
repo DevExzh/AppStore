@@ -182,6 +182,19 @@ public class GameAppTest {
         }
 
         @Test
+        void addGenres() {
+            assertTrue(gameAppOnBoundary.addGenre(RPG));
+            assertTrue(gameAppOnBoundary.addGenre(Sports));
+            assertTrue(gameAppOnBoundary.getGenres().contains(RPG));
+            assertTrue(gameAppOnBoundary.getGenres().contains(Sports));
+            assertTrue(gameAppAboveBoundary.addGenre(Survival));
+            assertTrue(gameAppAboveBoundary.getGenres().contains(Survival));
+            assertFalse(gameAppAboveBoundary.getGenres().contains(Indie));
+            assertTrue(gameAppInvalidData.addGenre(Strategy));
+            assertTrue(gameAppInvalidData.getGenres().contains(Strategy));
+        }
+
+        @Test
         void removeGenres() {
             gameAppBelowBoundary.removeGenre(GameApp.Genre.Casual);
             assertFalse(gameAppBelowBoundary.getGenres().contains(GameApp.Genre.Casual));
@@ -275,7 +288,7 @@ public class GameAppTest {
         gameApp.addRating(new Rating(rating1, "John Doe", "Very Good"));
         gameApp.addRating(new Rating(rating2, "Jane Doe", "Excellent"));
 
-        //verifying all conditions are true for a recommended educational app]
+        // verifying all conditions are true for a recommended educational app
         assertEquals(2, gameApp.getRatings().size());  //two ratings are added
         assertEquals(1.0, gameApp.getAppCost(), 0.01);
         assertEquals(((rating1 + rating2) / 2.0), gameApp.calculateRating(), 0.01);

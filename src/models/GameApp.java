@@ -19,7 +19,7 @@ public class GameApp extends App {
         Puzzle, Anime, Survival
     }
 
-    private HashSet<Genre> genres = new HashSet<>();
+    private final HashSet<Genre> genres = new HashSet<>();
 
     public HashSet<Genre> getGenres() {
         return genres;
