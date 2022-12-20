@@ -1,6 +1,8 @@
 package utils;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Additional classes and methods to support more features like C/C++ like style coding
@@ -25,6 +27,40 @@ public class FoundationClassUtilities {
             }
             System.out.println("Sorry, that is an invalid value, please enter again!");
         }
+    }
+
+    public static double scanValidDouble(String prompt, FunctionPointer<Boolean, Double> callback) {
+        double returnValue;
+        for(;;) {
+            if(callback.invoke(returnValue = ScannerInput.validNextDouble(prompt))) {
+                return returnValue;
+            }
+            System.out.println("Sorry, that is an invalid value, please enter again!");
+        }
+    }
+
+    public static String scanValidString(String prompt, FunctionPointer<Boolean, String> callback) {
+        String returnValue;
+        for(;;) {
+            if(callback.invoke(returnValue = ScannerInput.validNextLine(prompt))) {
+                return returnValue;
+            }
+            System.out.println("Sorry, that is an invalid value, please enter again!");
+        }
+    }
+
+    public static String scanValidString(String prompt, Collection<String> collection) {
+        String returnValue;
+        for(;;) {
+            if(collection.contains(returnValue = ScannerInput.validNextLine(prompt).toLowerCase())) {
+                return returnValue;
+            }
+            System.out.println("Sorry, that is an invalid value, please enter again!");
+        }
+    }
+
+    public static String scanValidString(String prompt, String[] array) {
+        return scanValidString(prompt, new HashSet<>(Arrays.asList(array)));
     }
 
     /**
