@@ -46,15 +46,14 @@ public class DeveloperAPI implements ISerializer {
 
 
     public String listDevelopers(){
-        String listDevelopers = "";
+        StringBuilder listDevelopers = new StringBuilder();
         for (Developer developer : developers){
-            listDevelopers += developers.indexOf(developer) + ": " + developer + "\n";
+            listDevelopers.append(developers.indexOf(developer)).append(": ").append(developer).append("\n");
         }
-        if (listDevelopers.equals("")){
+        if (listDevelopers.toString().equals("")){
             return "No developers";
-        }
-        else {
-            return listDevelopers;
+        } else {
+            return listDevelopers.toString();
         }
     }
 
