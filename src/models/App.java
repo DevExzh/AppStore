@@ -140,7 +140,7 @@ public abstract class App {
      */
     public App(Developer developer, String appName, double appSize, double appVersion, double appCost) {
         this.developer = developer;
-        if(appName != null && !appName.isEmpty()) this.appName = appName;
+        this.appName = appName;
         if(Utilities.validRange(appSize, 0, 1000)) this.appSize = appSize;
         if(Utilities.greaterThanOrEqualTo(appVersion, 1.0)) this.appVersion = appVersion;
         if(Utilities.greaterThanOrEqualTo(appCost, 0)) this.appCost = appCost;
@@ -160,7 +160,8 @@ public abstract class App {
         for(Language language : languages) {
             sb.append(language.toString()).append(", ");
         }
-        sb.delete(sb.length() - 2, sb.length());
+        if(!languages.isEmpty())
+            sb.delete(sb.length() - 2, sb.length());
         return sb.toString();
     }
 
@@ -193,6 +194,7 @@ public abstract class App {
                 + ", Size: " + appSize + "MB"
                 + ", Cost: " + currencySymbol + appCost
                 + ", Ratings (" + calculateRating() + "): " + ratings
-                + ", Supported languages: " + supportedLanguages() + '.';
+                + ", Supported languages: " + supportedLanguages() + ". "
+                + getDescription();
     }
 }
