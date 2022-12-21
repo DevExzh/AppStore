@@ -299,11 +299,23 @@ public class AppStoreAPI implements ISerializer {
         out.close();
     }
 
+    private String xmlFileName = "apps.xml";
+
+    /**
+     * <strong>Test Only</strong>
+     * <p>DO NOT CALL THIS METHOD UNLESS YOU WANT TO TEST EXCEPTION</p>
+     * @param fileName String parameter passed to change the xmlFileName field
+     */
+    public void setFileName(String fileName) {
+        this.xmlFileName = fileName;
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public String fileName() {
-        File xmlFile = new File("apps.xml");
+        File xmlFile = new File(xmlFileName);
         if(!xmlFile.exists()) { // If the file doesn't exist then create it
             try {
-                xmlFile.createNewFile();
+                xmlFile.createNewFile(); // The return value cannot be false
                 ObjectOutputStream out = new XStream(new DomDriver()).createObjectOutputStream(new FileWriter("apps.xml"));
                 out.writeObject(apps);
                 out.close();

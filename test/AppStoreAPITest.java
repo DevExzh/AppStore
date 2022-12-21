@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AppStoreAPITest {
@@ -188,17 +190,119 @@ public class AppStoreAPITest {
             assertTrue(apps.contains("WeDo"));
         }
 
+        @Test
+        void listAllSummaryOfAllAppsReturnsNoAppsStoredWhenArrayListIsEmpty() {
+            assertEquals(0, emptyAppStore.numberOfApps());
+            assertTrue(emptyAppStore.listSummaryOfAllApps().toLowerCase().contains("no apps"));
+        }
 
-    }
+        @Test
+        void listAllSummaryOfAllAppsReturnsAppsStoredWhenArrayListHasAppsStored() {
+            assertEquals(12, appStore.numberOfApps());
+            String summary = appStore.listSummaryOfAllApps();
+            assertTrue(summary.contains("Outlook"));
+            assertTrue(summary.contains(String.valueOf(2.0)));
+        }
 
-    @Nested
-    class ReportingMethods {
+        @Test
+        void listAllGameAppsReturnsGameAppsStoredWhenArrayListHasAppsStored() {
+            assertEquals(12, appStore.numberOfApps());
+            String summary = appStore.listAllGameApps();
+            assertTrue(summary.contains("Empires"));
+            assertTrue(summary.contains("CookOff"));
+            assertTrue(summary.contains("Tetris"));
+            assertFalse(summary.contains("Outlook"));
+            assertFalse(summary.contains("EV3"));
+            assertTrue(summary.contains("Genres"));
+        }
 
+        @Test
+        void listAllGameAppsReturnsNoGameAppsWhenArrayListIsEmpty() {
+            assertEquals(0, emptyAppStore.numberOfApps());
+            assertTrue(emptyAppStore.listAllGameApps().toLowerCase().contains("no game apps"));
+        }
+
+        @Test
+        void listAllEducationAppsReturnsEducationAppsStoredWhenArrayListHasAppsStored() {
+            assertEquals(12, appStore.numberOfApps());
+            String summary = appStore.listAllEducationApps();
+            assertTrue(summary.contains("Spike"));
+            assertTrue(summary.contains("WeDo"));
+            assertFalse(summary.contains("CookOff"));
+        }
+
+        @Test
+        void listAllProductivityAppsReturnsNoProductivityAppsWhenArrayListIsEmpty() {
+            assertEquals(0, emptyAppStore.numberOfApps());
+            assertTrue(emptyAppStore.listAllProductivityApps().toLowerCase().contains("no productivity apps"));
+        }
+
+        @Test
+        void listAllProductivityAppsReturnsProductivityAppsStoredWhenArrayListHasAppsStored() {
+            assertEquals(12, appStore.numberOfApps());
+            String summary = appStore.listAllProductivityApps();
+            assertTrue(summary.contains("Pages"));
+            assertTrue(summary.contains("NoteKeeper"));
+            assertFalse(summary.contains("MazeRunner"));
+            assertFalse(summary.contains("WeDo"));
+        }
     }
 
     @Nested
     class SearchingMethods {
+        @Test
+        void listAllAppsByNameWhenArrayListHasAppsStored() {
+            assertEquals(12, appStore.numberOfApps());
+            String list = appStore.listAllAppsByName("Pages");
+            assertTrue(list.contains("Pages"));
+            assertFalse(list.contains("NoteKeeper"));
+            assertTrue(list.contains("3.5"));
+            assertTrue(list.contains("2.99"));
+        }
 
+        @Test
+        void listAllAppsByNameReturnsNoAppsWhenArrayListIsEmpty() {
+            assertEquals(0, emptyAppStore.numberOfApps());
+            assertTrue(emptyAppStore.listAllAppsByName("NoteKeeper").toLowerCase().contains("no apps"));
+        }
+
+        @Test
+        void listAllAppsAboveOrEqualAGivenStarRatingReturnsAppsMatchingStarRatingWhenArrayListHasAppsStored() {
+            assertEquals(12, appStore.numberOfApps());
+            assertTrue(appStore.listAllAppsAboveOrEqualAGivenStarRating(10).toLowerCase().contains("no apps"));
+            assertTrue(appStore.listAllAppsAboveOrEqualAGivenStarRating(0).toLowerCase().contains("no apps"));
+            appStore.addApp(setupProductivityAppWithRating(2,3));
+            String list = appStore.listAllAppsAboveOrEqualAGivenStarRating(1);
+            assertTrue(list.contains("Evernote"));
+            assertTrue(list.contains("John101"));
+        }
+
+        @Test
+        void listAllAppsByChosenDeveloperReturnsNoAppsWhenTheDeveloperDoesNotExist() {
+            assertTrue(appStore.listAllAppsByChosenDeveloper(developerSphero).toLowerCase().contains("no apps for developer"));
+        }
+
+        @Test
+        void listAllAppsByChosenDeveloperReturnsNoAppsWhenArrayListIsEmpty() {
+            assertEquals(0, emptyAppStore.numberOfApps());
+            assertTrue(emptyAppStore.listAllAppsByChosenDeveloper(developerSphero).toLowerCase().contains("no apps for developer"));
+        }
+
+        @Test
+        void listAllAppsByChosenDeveloperReturnsAppsMatchingDeveloperWhenArrayListHasAppsStored() {
+            assertEquals(12, appStore.numberOfApps());
+            String list = appStore.listAllAppsByChosenDeveloper(developerLego);
+            assertTrue(list.contains("WeDo"));
+            assertTrue(list.contains("Spike"));
+            assertFalse(list.contains("CookOff"));
+        }
+
+        @Test
+        void numberOfAppsByChosenDeveloper() {
+            assertEquals(12, appStore.numberOfApps());
+            assertEquals(0, emptyAppStore.numberOfAppsByChosenDeveloper(developerMicrosoft));
+            assertEquals(0, appStore.numberOfAppsByChosenDeveloper(developerSphero));
+        }
     }
 
     @Nested
@@ -231,6 +335,75 @@ public class AppStoreAPITest {
             emptyAppStore.sortAppsByNameAscending();
         }
 
+    }
+
+    @Nested
+    class PersistenceMethods {
+        @Test
+        void loadXMLFile() {
+            assertEquals(12, appStore.numberOfApps());
+            try {
+                appStore.load();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            assertTrue(appStore.numberOfApps() >= 12);
+            // Check whether
+        }
+
+        @Test
+        void saveXMLFile() {
+            File xmlFile = new File("apps.xml");
+            if(xmlFile.exists()) xmlFile.delete();
+            try {
+                appStore.save();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            assertTrue(xmlFile.exists());
+        }
+
+        @Test
+        void checkXMLFileName() {
+            assertEquals("apps.xml", appStore.fileName());
+            File xmlFile = new File("apps.xml");
+            if(xmlFile.exists()) xmlFile.delete();
+            assertEquals("apps.xml", appStore.fileName());
+            // This is a new method introduced in version 5.8
+            // If the IDEA indicates that the method does not exist
+            // Please update the JUnit library to the latest version
+            assertThrowsExactly(RuntimeException.class, () -> {
+                // An exception will be thrown if the fileName is in a nonexistent directory
+                appStore.setFileName(xmlFile.getAbsolutePath() + File.separator + "APathThatWillThrowException" + File.separator + "apps.xml");
+                appStore.fileName(); // Should throw an exception
+            });
+        }
+    }
+
+    @Nested
+    class ValidationMethods {
+        @Test
+        void isValidAppName() {
+            assertTrue(appStore.isValidAppName("Empires"));
+            assertTrue(appStore.isValidAppName("CookOff"));
+            assertTrue(appStore.isValidAppName("Tetris"));
+            assertTrue(appStore.isValidAppName("Outlook"));
+            assertFalse(emptyAppStore.isValidAppName("Outlook"));
+        }
+    }
+
+    @Test
+    void checkRandomApp() {
+        assertNull(emptyAppStore.randomApp());
+        assertNotNull(appStore.randomApp());
+    }
+
+    @Test
+    void checkSimulateRatings() {
+        appStore.simulateRatings();
+        for (int i = 0; i < appStore.numberOfApps(); ++i) {
+            assertFalse(appStore.getAppByIndex(i).getRatings().isEmpty());
+        }
     }
 
     //--------------------------------------------
