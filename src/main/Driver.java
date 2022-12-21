@@ -79,12 +79,12 @@ public class Driver {
     }
 
     private void runRegionMenu() {
-        switch (FoundationClassUtilities.scanValidInteger("""
+        switch (ScannerInput.validNextInt("""
                 -------- Region Preference --------
                 |  1) Change the currency         |
                 |  0) RETURN to main menu         |
                 |---------------------------------|
-                """, (option) -> option >= 0 && option <= 1)) {
+                """)) {
             default:
                 ScannerInput.validNextLine("Invalid option... Return to main menu.\nPress any key to continue...");
             case 0:
@@ -123,14 +123,14 @@ public class Driver {
     // App Management
     // --------------------
     private void runAppMenu() {
-        switch (FoundationClassUtilities.scanValidInteger("""
+        switch (ScannerInput.validNextInt("""
                 |--------App Store Menu--------|
                 |  1) Add an app               |
                 |  2) Update an app            |
                 |  3) Delete an app            |
                 |  0) RETURN to main menu      |
                 |------------------------------|
-                """, (choice) -> choice >= 0 && choice <= 5)) {
+                """)) {
             default:
                 ScannerInput.validNextLine("Invalid option... Return to main menu.\nPress any key to continue...");
             case 0:
@@ -202,7 +202,28 @@ public class Driver {
     // Reports
     // --------------------
     private void runReportMenu() {
-
+        switch (ScannerInput.validNextInt("""
+                ---------- Report Menu ----------
+                |   1) Apps Overview            |
+                |   2) Developers Overview      |
+                |   0) RETURN to main menu      |
+                ---------------------------------
+                """)) {
+            default:
+                ScannerInput.validNextLine("Invalid option... Return to main menu.\nPress any key to continue...");
+            case 0:
+                return;
+            case 1:
+                System.out.println("-------------- Productivity Apps --------------");
+                System.out.println(appStoreAPI.listAllProductivityApps());
+                System.out.println("--------------- Education Apps ---------------");
+                System.out.println(appStoreAPI.listAllEducationApps());
+                System.out.println("-------------------- Games --------------------");
+                System.out.println(appStoreAPI.listAllGameApps());
+                break;
+            case 2:
+                break;
+        }
     }
 
     //--------------------------------------------------
@@ -301,6 +322,9 @@ public class Driver {
     }
 
     private void searchAppsByDeveloper(Developer developer) {
+        System.out.println("There are "
+                + appStoreAPI.numberOfAppsByChosenDeveloper(developer)
+                + " apps developed by " + developer.getDeveloperName());
         System.out.println(appStoreAPI.listAllAppsByChosenDeveloper(developer));
     }
 
