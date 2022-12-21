@@ -226,7 +226,7 @@ public class GameAppTest {
             assertTrue(stringContents.contains("(Version " + gameApp.getAppVersion()));
             assertTrue(stringContents.contains(gameApp.getDeveloper().toString()));
             assertTrue(stringContents.contains(gameApp.getAppSize() + "MB"));
-            assertTrue(stringContents.contains("Cost: " + gameApp.getAppCost()));
+            assertTrue(stringContents.contains("Cost: " + gameApp.getCurrencySymbol() + gameApp.getAppCost()));
             assertTrue(stringContents.contains("Ratings (" + gameApp.calculateRating()));
             assertTrue(stringContents.contains("Genres: "));
 

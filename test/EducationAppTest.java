@@ -192,7 +192,7 @@ public class EducationAppTest {
             assertTrue(stringContents.contains("(Version " + edApp.getAppVersion()));
             assertTrue(stringContents.contains(edApp.getDeveloper().toString()));
             assertTrue(stringContents.contains(edApp.getAppSize() + "MB"));
-            assertTrue(stringContents.contains("Cost: " + edApp.getAppCost()));
+            assertTrue(stringContents.contains("Cost: " + edApp.getCurrencySymbol() + edApp.getAppCost()));
             assertTrue(stringContents.contains("Level: " + edApp.getLevel()));
             assertTrue(stringContents.contains("Ratings (" + edApp.calculateRating()));
 

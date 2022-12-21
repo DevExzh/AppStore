@@ -165,7 +165,7 @@ public class ProductivityAppTest {
             assertTrue(stringContents.contains("(Version " + prodApp.getAppVersion()));
             assertTrue(stringContents.contains(prodApp.getDeveloper().toString()));
             assertTrue(stringContents.contains(prodApp.getAppSize() + "MB"));
-            assertTrue(stringContents.contains("Cost: " + prodApp.getAppCost()));
+            assertTrue(stringContents.contains("Cost: " + prodApp.getCurrencySymbol() + prodApp.getAppCost()));
             assertTrue(stringContents.contains("Ratings (" + prodApp.calculateRating()));
 
             //contains list of ratings too
