@@ -1,5 +1,7 @@
 # Assignment 2
-<img src="https://img.shields.io/badge/licence-Apache--2.0-blue"/> <img src="https://img.shields.io/badge/JUnit-5.9.0-blue"/>
+![License](https://img.shields.io/badge/License-Apache--2.0-blue)
+![JUnit](https://img.shields.io/badge/JUnit-5.9.0-blue)
+![XStream](https://img.shields.io/badge/XStream-1.4.19-blue)
 ![ZHU He](https://img.shields.io/badge/Author-Ryker%20Zhu-blueviolet)
 ![SETU](https://img.shields.io/badge/Lecturer-Mairead%20Meagher-9cf)
 ![GitHub](https://img.shields.io/github/stars/DevExzh/AppStore?style=social)
@@ -47,7 +49,7 @@ The information entered via the app will be persisted in XML files.
 * Modified
     | _Class Name_ | _Modification_ |
     |:---:|:---|
-    | `DeveloperAPI`, `AppStoreAPI` | Since the `XStream.setupDefaultSecurity()` method is deprecated in version 5.9 and above, the implementation of the `load()` method is modified to avoid using the deprecated method. |
+    | `DeveloperAPI`, `AppStoreAPI` | Since the `XStream.setupDefaultSecurity()` method is deprecated in version 1.4.18 and above, the implementation of the `load()` method is modified to avoid using the deprecated method. |
     | `DeveloperAPI`, `AppStoreAPI` | Because `FileNotFoundException` will be thrown if the two XML files do not exist in the specified path, the `fileName()` method has now been modified to create the file if it does not exist. |
 * Additional fields
     | _Class Name_ | _Extra fields_ | _Description_ |
