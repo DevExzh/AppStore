@@ -84,7 +84,7 @@ public class Driver {
                 |  1) Change the currency         |
                 |  0) RETURN to main menu         |
                 |---------------------------------|
-                """)) {
+                ==>>\s""")) {
             default:
                 ScannerInput.validNextLine("Invalid option... Return to main menu.\nPress any key to continue...");
             case 0:
@@ -97,7 +97,7 @@ public class Driver {
                        
                          Current currency:\s
                         """ + currencySymbol +
-                        "--------------------------------", (option) -> option >= 0 && option <= 1)) {
+                        "--------------------------------\n==>> ", (option) -> option >= 0 && option <= 1)) {
                     default -> "€";
                     case 2 -> "￥";
                     case 3 -> "$";
@@ -130,7 +130,7 @@ public class Driver {
                 |  3) Delete an app            |
                 |  0) RETURN to main menu      |
                 |------------------------------|
-                """)) {
+                ==>>\s""")) {
             default:
                 ScannerInput.validNextLine("Invalid option... Return to main menu.\nPress any key to continue...");
             case 0:
@@ -147,7 +147,9 @@ public class Driver {
                         (value) -> Utilities.greaterThanOrEqualTo(value, 1.0)); // >= 1.0
                 double appCost = FoundationClassUtilities.scanValidDouble("Please enter the cost of the App: ",
                         (value) -> Utilities.greaterThanOrEqualTo(value, 0)); // >= 0
-                System.out.println(appStoreAPI.addApp(switch (appType.toLowerCase()) {
+                String description = ScannerInput.validNextLine("Please enter the description of the App: ");
+                App app;
+                System.out.println(appStoreAPI.addApp(app = switch (appType.toLowerCase()) {
                     case "education", "e" ->
                             new EducationApp(developer, appName, appSize, appVersion, appCost,
                                     ScannerInput.validNextInt("Please enter the level of the education app: "));
@@ -159,6 +161,26 @@ public class Driver {
                     default -> // Will never reach here, just to be safe
                             new ProductivityApp(developer, "", -1, -1, -1);
                 }) ? "The app has been added successfully." : "There was an error adding the app.");
+                app.setDescription(description);
+                int choices = ScannerInput.validNextInt("""
+                                Which language does the app support?
+                                   1 : English
+                                   2 : French
+                                   3 : Japanese
+                                   4 : Portuguese
+                                   5 : Russian
+                                   6 : Spanish
+                                   7 : Chinese
+                                Enter the numbers representing languages:\s""");
+                int currentDigit;
+                while (choices > 0) {
+                    if((currentDigit = choices % 10) > 7 || currentDigit == 0) {
+                        choices /= 10;
+                        continue;
+                    }
+                    app.addLanguage(Language.values()[currentDigit - 1]);
+                    choices /= 10;
+                }
                 break;
             case 2: // Update an app
                 appStoreAPI.listAllApps();
@@ -208,7 +230,7 @@ public class Driver {
                 |   2) Developers Overview      |
                 |   0) RETURN to main menu      |
                 ---------------------------------
-                """)) {
+                ==>>\s""")) {
             default:
                 ScannerInput.validNextLine("Invalid option... Return to main menu.\nPress any key to continue...");
             case 0:
