@@ -4,8 +4,11 @@ import controllers.AppStoreAPI;
 import controllers.DeveloperAPI;
 import models.*;
 import utils.FoundationClassUtilities;
+import utils.FoundationClassUtilities.VoidFunctionPointer;
 import utils.ScannerInput;
 import utils.Utilities;
+
+import java.io.IOException;
 
 /**
  * The responsibility for this class is to manage the User Interface (UI) i.e. the menu and user input/output. This class should be the only class that has System.out.println() or Scanner reads in it. This class contains an object of AppStoreAPI and an object of DeveloperAPI.
@@ -18,16 +21,38 @@ public class Driver {
     private final AppStoreAPI appStoreAPI = new AppStoreAPI();
     private String currencySymbol = "€";
 
+    private VoidFunctionPointer clearScreen;
+
     public static void main(String[] args) {
         new Driver().start();
     }
 
     public void start() {
+        String osName = System.getProperty("os.name");
+        if (osName != null) {
+            try {
+                if (osName.startsWith("Windows")) {
+                    clearScreen = () -> {
+                        try {
+                            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                        } catch (InterruptedException | IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    };
+                    new ProcessBuilder("cmd", "/c", "title App Store").inheritIO().start().waitFor();
+                } else { // UNIX-like Systems
+                    clearScreen = () -> System.out.print("\033\143");
+                }
+            } catch (Exception e) {
+                System.err.println("Exception thrown when a process was called: " + e);
+            }
+        }
         loadAllData();
         runMainMenu();
     }
 
     private int mainMenu() {
+        clearScreen.invoke();
         System.out.println("""
                  -------------App Store------------
                 |  1) Developer - Management MENU  |
@@ -54,6 +79,7 @@ public class Driver {
     private void runMainMenu() {
         int option = mainMenu();
         while (option != 0) {
+            clearScreen.invoke();
             switch (option) {
                 case 1 -> runDeveloperMenu();
                 case 2 -> runAppMenu();
@@ -86,7 +112,7 @@ public class Driver {
                 |---------------------------------|
                 ==>>\s""")) {
             default:
-                ScannerInput.validNextLine("Invalid option... Return to main menu.\nPress any key to continue...");
+                System.out.println("Invalid option... Return to main menu.");
             case 0:
                 return;
             case 1:
@@ -95,9 +121,8 @@ public class Driver {
                             1) EUR €         2) CNY ￥
                             3) USD $         4) GBP £
                        
-                         Current currency:\s
-                        """ + currencySymbol +
-                        "--------------------------------\n==>> ", (option) -> option >= 0 && option <= 1)) {
+                         Current currency:\s""" + currencySymbol +
+                        "\n--------------------------------\n==>> ", (option) -> option >= 1 && option <= 4)) {
                     default -> "€";
                     case 2 -> "￥";
                     case 3 -> "$";
@@ -123,6 +148,7 @@ public class Driver {
     // App Management
     // --------------------
     private void runAppMenu() {
+        clearScreen.invoke();
         switch (ScannerInput.validNextInt("""
                 |--------App Store Menu--------|
                 |  1) Add an app               |
@@ -132,7 +158,7 @@ public class Driver {
                 |------------------------------|
                 ==>>\s""")) {
             default:
-                ScannerInput.validNextLine("Invalid option... Return to main menu.\nPress any key to continue...");
+                System.out.println("Invalid option... Return to main menu.");
             case 0:
                 return;
             case 1: // Add an app
@@ -224,6 +250,7 @@ public class Driver {
     // Reports
     // --------------------
     private void runReportMenu() {
+        clearScreen.invoke();
         switch (ScannerInput.validNextInt("""
                 ---------- Report Menu ----------
                 |   1) Apps Overview            |
@@ -232,7 +259,7 @@ public class Driver {
                 ---------------------------------
                 ==>>\s""")) {
             default:
-                ScannerInput.validNextLine("Invalid option... Return to main menu.\nPress any key to continue...");
+                System.out.println("Invalid option... Return to main menu.");
             case 0:
                 return;
             case 1:
@@ -252,6 +279,7 @@ public class Driver {
     //  Developer Management - Menu Items
     //--------------------------------------------------
     private int developerMenu() {
+        clearScreen.invoke();
         System.out.println("""
                  -------Developer Menu-------
                 |   1) Add a developer       |
